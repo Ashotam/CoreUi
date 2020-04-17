@@ -1,0 +1,22 @@
+.red{
+    color:red
+}
+.green{
+    color:green
+}
+.icons-span{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 60px;
+    padding: 0 5px;
+}
+.group-name{
+    width:25%;
+}
+.group-actions{
+    width: 20%;
+}
+.group-id{
+    width: 10%;
+}

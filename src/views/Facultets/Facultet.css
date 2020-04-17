@@ -1,0 +1,19 @@
+.red{
+    color:red
+}
+.green{
+    color:green
+}
+.icons-span{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 60px;
+    padding: 0 5px;
+}
+.actions{
+    width: 25%;
+}
+.id{
+    width: 10%;
+}
