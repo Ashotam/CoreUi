@@ -1,13 +1,12 @@
-import React, {useState } from 'react';
+import React, {useState,useEffect } from 'react';
 import {  Card, CardBody, CardHeader, Col, Row, Table,Button,Form,
-  FormGroup, Input,Label,} from 'reactstrap';
+  FormGroup, Input,Label,FormFeedback} from 'reactstrap';
 import './Students.css';
 import { connect } from 'react-redux'
 import { studentOperations } from '../../states/ducks/Students';
-
-
+import Modal from "../Modals/Modals"
 function Groups(props) {
-const {studentData,groupData,facData,addStudent,changeStudent,deletStudent}= props
+const {studentData,facData,addStudent,changeStudent,deletStudent}= props
 
 const[isOpenedCreate,setIsOpenCreate]=useState(false);
 const[isopenedEdit,setIsopenedEdit]=useState(false);
@@ -17,14 +16,69 @@ const [studentLastName,setStudentLastName]= useState("");
 const [studentEmail,setStudentEmail]= useState("")
 const [studentPhone,setStudentPhone]= useState("")
 const [selectedFac,setSelectedFac]=useState("")
+const [groupData,setGroupData]=useState(null)
+useEffect(() => {
+  if(selectedFac.length){
+     const groupData = facData.find(fac=>fac.name===selectedFac).groups
+    
+      setGroupData(groupData)
+  }
+  console.log(groupData)
+},[selectedFac]);
 const [selectedGroup,setSelectedGroup]= useState("");
+const [error,setError]= useState(
+  {
+    nameError:false,
+    nameErrorTexet:"Name must be at least 4 characters",
+    lastNameError:false,
+    lastNameErrorTexet:"Lastname must be at least 4 characters",
+    phoneError:false,
+    phoneErrorText:"Write correct phone Number",
+    emailError:false,
+    emailErrorText:"Write correct email",
+    groupError:false,
+    groupNameErrorText:"Name must choose group",
+    facultyError:false,
+    facultyErrorText:"Name must choose faculty",
+  }
+)
+const [isOpenModal,setIsOpenModal]= useState(false)
+
+const  validateEmail=(email)=> {
+  let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return re.test(String(email).toLowerCase());
+}
+const validatePhone =(phone)=> {
+  var phoneno = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
+    return phoneno.test(String(phone).toLowerCase());
+}
 const openCreateStudent = ()=>{
   setIsOpenCreate(!isOpenedCreate)
 }
 
 const addHendler = ()=>{
-  if(studentName&&studentLastName,studentEmail,studentPhone,selectedFac,selectedGroup){
-    let nextId =groupData.length+1;
+  console.log(validatePhone("fdsfsd"),validateEmail("asdsa"))
+  if(studentName<4){
+    setError({...error, nameError:true})
+  }
+  else if(studentLastName<4){
+    setError({...error, lastNameError:true})
+  }
+  
+  else if(!validateEmail(studentEmail)){
+    setError({...error, emailError:true})
+  }
+  else if(!validatePhone(studentPhone)){
+    setError({...error, phoneError:true})
+  }
+  else if(!selectedFac.length){
+    setError({...error, facultyError:true})
+  }
+  else if(!selectedGroup.length){
+    setError({...error, groupError:true})
+  }
+  else{
+    let nextId = studentData.length+1;
     let newGroup = {
       id:nextId,
       name:studentName,
@@ -42,6 +96,7 @@ const addHendler = ()=>{
     setStudentPhone("")
     setSelectedGroup("")
     setSelectedFac("")
+    setError({...error, nameError:false,lastNameError:false,emailError:false,phoneError:false,facultyError:false,groupError:false})
   } 
 }
 
@@ -52,41 +107,81 @@ const editHandler = (id)=>{
   setStudentLastName(studentData[id-1].lastName)
   setStudentEmail(studentData[id-1].email)
   setStudentPhone(studentData[id-1].phone)
-
-
+  setSelectedFac(studentData[id-1].faculty)
+  setSelectedGroup(studentData[id-1].group)
 
 }
 
+
 const delateHandler = (id)=>{
-  deletStudent(id)
+  setSelectedStudent(id)
+  setIsOpenModal(true)
+}
+const onDelete = ()=>{
+  deletStudent(selectedStudent)
+  setIsOpenModal(false)
 }
 
 const editStudent = ()=>{
+  if(studentName<4){
+    setError({...error, nameError:true})
+  }
+  else if(studentLastName<4){
+    setError({...error, lastNameError:true})
+  }
   
-    
+  else if(!validateEmail(studentEmail) ){
+    setError({...error, emailError:true})
+  }
+  else if(!validatePhone(studentPhone)){
+    setError({...error, phoneError:true})
+  }
+  else if(!selectedFac.length){
+    setError({...error, facultyError:true})
+  }
+  else if(!selectedGroup.length){
+    setError({...error, groupError:true})
+  }
+  else{
     changeStudent({
-     id:selectedStudent,
-     name:studentName,
-     lastName:studentLastName,
-     email:studentEmail,
-     phone:studentPhone,
-     faculty:selectedFac,
-     group:selectedGroup
-   })
-   setIsopenedEdit(false)
-  
+      id:selectedStudent,
+      name:studentName,
+      lastName:studentLastName,
+      email:studentEmail,
+      phone:studentPhone,
+      faculty:selectedFac,
+      group:selectedGroup
+    })
+    setStudentName("");
+    setStudentLastName("");
+    setStudentEmail();
+    setStudentPhone("")
+    setSelectedGroup("")
+    setSelectedFac("")
+    setIsopenedEdit(false)
+    setError({...error, nameError:false,lastNameError:false,emailError:false,phoneError:false,facultyError:false,groupError:false})
+  } 
 }
 
 const canselHandler = (str)=>{
   if(studentName){
-    setStudentName("")
+    setStudentName("");
+    setStudentLastName("");
+    setStudentEmail("");
+    setStudentPhone("")
+    setSelectedGroup("")
+    setSelectedFac("")
   }
   else 
-  str === "isopenedEdit"?setIsopenedEdit(false):setIsOpenCreate(false)
+  str === "isopenedEdit"?setIsopenedEdit(false):setIsOpenCreate(false);
+  setError({...error, nameError:false,lastNameError:false,emailError:false,phoneError:false,facultyError:false,groupError:false})
 }
   return (
     <div>
       {!isOpenedCreate &&!isopenedEdit &&(<Row>
+        <Modal isOpen = {isOpenModal} deletedData={"Student"} onDelete={onDelete} onCansel ={()=>{
+                          setIsOpenModal(false)
+                       }}/>
           <Col >
             <Card>
               <CardHeader>
@@ -139,7 +234,6 @@ const canselHandler = (str)=>{
           </Col>
      </Row>)}
     {isOpenedCreate &&  <Card>
-      {/* <ContactForm onSubmit={submit}></ContactForm> */}
               <CardHeader>
                 Edit Group
               </CardHeader>
@@ -147,30 +241,36 @@ const canselHandler = (str)=>{
                 <Form action="" method="post">
                   <FormGroup>
                   <Label ><strong>Name:</strong></Label>
-                    <Input type="text" id="name" name="name" value={studentName}  onChange={(e)=>{setStudentName(e.target.value)}} />
+                    <Input type="text" id="name" name="name" invalid={studentName.length <4 &&error.nameError} value={studentName}  onChange={(e)=>{setStudentName(e.target.value)}} />
+                    <FormFeedback>{error.nameErrorTexet}</FormFeedback> 
                     <Label ><strong>Lastname:</strong></Label>
-                    <Input type="text" id="lastname" name="lastname" value={studentLastName}  onChange={(e)=>{setStudentLastName(e.target.value)}} />
+                    <Input type="text" id="lastname" name="lastname" invalid={studentLastName.length<4 && error.lastNameError} value={studentLastName}  onChange={(e)=>{setStudentLastName(e.target.value)}} />
+                    <FormFeedback>{error.lastNameErrorTexet}</FormFeedback> 
                     <Label ><strong>Email:</strong></Label>
-                    <Input type="email" id="email" name="email" value={studentEmail}  onChange={(e)=>{setStudentEmail(e.target.value)}} />
+                    <Input type="email" id="email" name="email"  invalid={!validateEmail(studentEmail)&&error.emailError} value={studentEmail}  onChange={(e)=>{setStudentEmail(e.target.value)}} />
+                    <FormFeedback>{error.emailErrorText}</FormFeedback> 
                     <Label ><strong>Phone:</strong></Label>
-                    <Input type="text" id="phone" name="phone" value={studentPhone}  onChange={(e)=>{setStudentPhone(e.target.value)}} />
-                    <Label ><strong>Faculty:</strong></Label>
+                    <Input type="text" id="phone" name="phone" invalid={!validatePhone(studentPhone)&&error.phoneError} value={studentPhone}  onChange={(e)=>{setStudentPhone(e.target.value)}} />
+                    <FormFeedback>{error.phoneErrorText }</FormFeedback>
+                    <Label ><strong>Faculty:</strong></Label> 
                     <Col xs="18" md="15">
-                      <Input type="select" name="selectFaculty" id="selectFaculty" placeholder={""} onChange = {(e)=>{setSelectedFac(e.target.value)}}>
-                      <option hidden ></option>
+                      <Input type="select" name="selectFaculty" id="selectFaculty" invalid={selectedFac.length===0 && error.facultyError} onChange = {(e)=>{setSelectedFac(e.target.value)}}>
+                           <option hidden >{}</option>
 =                        {facData.map((fac)=>{
                           return( <option key = {fac.id}value={`${fac.name}`} >{fac.name}</option>)
                         })}
                       </Input>
+                      <FormFeedback>{error.facultyErrorText}</FormFeedback> 
                     </Col>
                     <Label ><strong>Group:</strong></Label>
                     <Col xs="18" md="15">
-                      <Input type="select" name="selectGroup" id="selectGroup" placeholder={""} onChange = {(e)=>{setSelectedGroup(e.target.value)}}>
+                      <Input type="select" name="selectGroup" id="selectGroup" invalid={selectedGroup.length===0 && error.groupError}  onChange = {(e)=>{setSelectedGroup(e.target.value)}}>
                       <option hidden ></option>
-=                        {groupData.map((group)=>{
+=                        {groupData&&groupData.map((group)=>{
                           return( <option key = {group.id}value={`${group.name}`} >{group.name}</option>)
                         })}
                       </Input>
+                      <FormFeedback>{error.groupNameErrorText}</FormFeedback> 
                     </Col>
                   </FormGroup>
                      
@@ -193,30 +293,36 @@ const canselHandler = (str)=>{
                 <Form action="" >
                 <FormGroup>
                   <Label ><strong>Name:</strong></Label>
-                    <Input type="text" id="name" name="name" value={studentName}  onChange={(e)=>{setStudentName(e.target.value)}} />
+                    <Input type="text" id="name" name="name" invalid={studentName.length <4 &&error.nameError} value={studentName}  onChange={(e)=>{setStudentName(e.target.value)}} />
+                    <FormFeedback>{error.nameErrorTexet}</FormFeedback>
                     <Label ><strong>Lastname:</strong></Label>
-                    <Input type="text" id="lastname" name="lastname" value={studentLastName}  onChange={(e)=>{setStudentLastName(e.target.value)}} />
+                    <Input type="text" id="lastname" name="lastname" invalid={studentLastName.length<4 && error.lastNameError} value={studentLastName}  onChange={(e)=>{setStudentLastName(e.target.value)}} />
+                    <FormFeedback>{error.lastNameErrorTexet}</FormFeedback> 
                     <Label ><strong>Email:</strong></Label>
-                    <Input type="email" id="email" name="email" value={studentEmail}  onChange={(e)=>{setStudentEmail(e.target.value)}} />
+                    <Input type="email" id="email" name="email" invalid={!validateEmail(studentEmail)&&error.emailError} value={studentEmail}  onChange={(e)=>{setStudentEmail(e.target.value)}} />
+                    <FormFeedback>{error.emailErrorText}</FormFeedback> 
                     <Label ><strong>Phone:</strong></Label>
-                    <Input type="text" id="phone" name="phone" value={studentPhone}  onChange={(e)=>{setStudentPhone(e.target.value)}} />
+                    <Input type="text" id="phone" name="phone" invalid={!validatePhone(studentPhone)&&error.phoneError} value={studentPhone}  onChange={(e)=>{setStudentPhone(e.target.value)}} />
+                    <FormFeedback>{error.phoneErrorText }</FormFeedback>
                     <Label ><strong>Faculty:</strong></Label>
                     <Col xs="18" md="15">
-                      <Input type="select" name="selectFaculty" id="selectFaculty" placeholder={""} onChange = {(e)=>{setSelectedFac(e.target.value)}}>
-                      <option hidden ></option>
+                      <Input type="select" name="selectFaculty" invalid={selectedFac.length===0 && error.facultyError} id="selectFaculty" placeholder={""} onChange = {(e)=>{setSelectedFac(e.target.value)}}>
+                             <option hidden >{selectedFac}</option>
 =                        {facData.map((fac)=>{
                           return( <option key = {fac.id}value={`${fac.name}`} >{fac.name}</option>)
                         })}
                       </Input>
+                      <FormFeedback>{error.facultyErrorText}</FormFeedback> 
                     </Col>
                     <Label ><strong>Group:</strong></Label>
                     <Col xs="18" md="15">
-                      <Input type="select" name="selectGroup" id="selectGroup" placeholder={""} onChange = {(e)=>{setSelectedGroup(e.target.value)}}>
-                      <option hidden ></option>
-=                        {groupData.map((group)=>{
+                      <Input type="select" name="selectGroup" id="selectGroup" invalid={selectedGroup.length===0 && error.groupError} onChange = {(e)=>{setSelectedGroup(e.target.value)}}>
+                      <option hidden >{selectedGroup}</option>
+=                        {groupData&&groupData.map((group)=>{
                           return( <option key = {group.id}value={`${group.name}`} >{group.name}</option>)
                         })}
                       </Input>
+                      <FormFeedback>{error.groupNameErrorText}</FormFeedback> 
                     </Col>
                   </FormGroup>          
                 </Form>

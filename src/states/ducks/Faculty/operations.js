@@ -15,9 +15,23 @@ const deletFaculty = ( id ) => ( dispatch ) => {
   
   dispatch( actions.remuve( id) );
 }
+const addGroup = ( data, facultyName) => ( dispatch ) => {
+  
+  dispatch(actions.addGroup( data,facultyName) );
+}
+const editGroup = ( data ) => ( dispatch ) => {
+dispatch( actions.editGroup( data) );
+}
+const deletGroup = ( id,facultyName ) => ( dispatch ) => {
+
+dispatch( actions.remuveGroup( id,facultyName) );
+}
 
 export default {
   addFaculty,
   editFaculty,
   deletFaculty,
+  addGroup,
+  editGroup,
+  deletGroup
 };

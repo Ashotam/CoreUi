@@ -1,4 +1,4 @@
-import React, { useState} from 'react';
+import React, { useState,useEffect} from 'react';
 import {
   Card, CardBody, CardHeader, Col, Table,
   Input
@@ -7,7 +7,7 @@ import { connect } from 'react-redux'
  
 
 function Dashboard(props) {
-    const {facData,groupData,studentData}=props
+    const {facData,studentData}=props
     const [studentId,setStudentId]= useState("");
     const [studentName,setStudentName]= useState("");
     const [studentLastName,setStudentLastName]= useState("");
@@ -15,7 +15,27 @@ function Dashboard(props) {
     const [studentPhone,setStudentPhone]= useState("")
     const [selectedFac,setSelectedFac]=useState("")
     const [selectedGroup,setSelectedGroup]= useState("");
-
+     const[groupData,setGroupData]=useState(null)
+    useEffect(() => {
+      let allGroupData = [];
+      console.log(selectedFac)
+       allGroupData = facData.reduce(function (accumulator, currentValue) {
+        currentValue.groups.map(group=>  accumulator.push(group))
+      
+        return accumulator
+    }, allGroupData)
+      const groupData = allGroupData;
+      setGroupData(groupData)
+    },[]);
+    useEffect(() => {
+    
+      if(selectedFac.length){
+        const  groupData = facData.find(fac=>fac.name===selectedFac).groups
+         setGroupData(groupData)
+      }
+      
+     
+    },[selectedFac]);
     const serchedData = (()=>{
       let serchedData = [...studentData]
       if(studentId){
@@ -41,7 +61,10 @@ function Dashboard(props) {
        }
       return serchedData
     })()
-    console.log(serchedData,studentData)
+    const selectFaculty= (e)=>{
+      setSelectedFac(e.target.value)
+      setSelectedGroup("")
+    }
     return (
       <div className="animated fadeIn">
         <Col >
@@ -70,14 +93,15 @@ function Dashboard(props) {
                     <td className="pl-1"><Input type="text"  placeholder="Search by LastName..." name="LastName" value = {studentLastName} onChange={(e)=>{setStudentLastName(e.target.value)}} /></td>
                     <td className="pl-1"><Input type="text"  placeholder="Search by Email..." name="Email" value = {studentEmail} onChange={(e)=>{setStudentEmail(e.target.value)}} /></td>
                     <td className="pl-1"><Input type="text"  placeholder="Search by Phone..." name="Phone" value = {studentPhone} onChange={(e)=>{setStudentPhone(e.target.value)}} /></td>
-                    <td className="pl-1"><Input type="select" name="selectFaculty" id="selectFaculty" placeholder={""} onChange = {(e)=>{setSelectedFac(e.target.value)}}>
+                    <td className="pl-1"><Input type="select" name="selectFaculty" id="selectFaculty" placeholder={""} onChange = {(e)=>{selectFaculty(e)}}>
                       <option value = ""  ></option>
                       {facData.map((fac)=>{
                           return( <option key = {fac.id}value={`${fac.name}`} >{fac.name}</option>)
                         })}
                       </Input></td>
                       <td className="pl-1"><Input type="select" name="selectFaculty" id="selectFaculty" placeholder={""} onChange = {(e)=>{setSelectedGroup(e.target.value)}}>
-                      <option value = ""  ></option>                        {groupData.map((group)=>{
+                      <option value = ""  ></option>   
+                          {groupData&&groupData.map((group)=>{
                           return( <option key = {group.id}value={`${group.name}`} >{group.name}</option>)
                         })}
                       </Input></td>

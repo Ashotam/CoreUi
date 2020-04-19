@@ -1,52 +1,80 @@
 import React, {useState } from 'react';
-import {  Card, CardBody, CardHeader, Col, Row, Table,Button,Form,
-  FormGroup,FormFeedback,Input,Label,} from 'reactstrap';
+import {  Card, CardBody, CardHeader, Col, Row, Table,Button} from 'reactstrap';
 import './Facultet.css';
-import { connect } from 'react-redux'
-import {facultyOperations} from "../../states/ducks/Faculty"
-
+import { connect } from 'react-redux';
+import {facultyOperations} from "../../states/ducks/Faculty";
+import Forms from "../Forms/FacultyForm"
+import Modal from "../Modals/Modals";
+import shortId from "shortid"
 function Facultets(props) {
-console.log(props)
 const {facData,addFaculty,changeFaculty,deletFaculty}= props
-
 const[isOpenedCreate,setIsOpenCreate]=useState(false);
 const[isopenedEdit,setIsopenedEdit]=useState(false);
 const [facultyName,setFacultyName]= useState("");
-const [selectedFac,setSelectidFac]= useState(0)
+const [selectedFac,setSelectedFac]= useState("");
+const [error,setError]= useState(
+  {
+    facultyNameError:false,
+    facultyNameErrorText:"Name must be at least 4 characters",
+  }
+)
+const [isOpenModal,setIsOpenModal]= useState(false)
 const openCreateFaculty = ()=>{
   setIsOpenCreate(!isOpenedCreate)
 }
 const addFaculti = ()=>{
-  if(facultyName){
-    let nextId =facData.length+1;
+  if(facultyName.length>3){
+
    
     let newFac = {
-      id:nextId,
+      id:shortId.generate(),
       name:facultyName
     }
     addFaculty(newFac)
     setIsOpenCreate(false);
-    setFacultyName("")
+    setFacultyName("");
+    setError({...error,facultyNameError:false})
   }
-  
+  else {
+  setError({...error,facultyNameError: true});
 }
+  }
+ const changeHandler = (e)=>{
+  setFacultyName(e.target.value)
+  }
 const editHandler = (id)=>{
   setIsopenedEdit(!isopenedEdit)
-  setSelectidFac(id)
-  setFacultyName(facData[id-1].name)
-
+  const name = facData.find(fac=>fac.id ==id).name
+  setSelectedFac(id)
+   setFacultyName(name)
 }
 const delateHandler = (id)=>{
-  deletFaculty(id)
+  let deletedFac = facData.find(fac=>fac.id===id)
+ if(deletedFac.groups.length===0){
+  if(facData)
+  setSelectedFac(id)
+  setIsOpenModal(true)
+ }
+  else { return/* notifaciton dnel*/ }
+}
+const onDelete = ()=>{
+  deletFaculty(selectedFac)
+  setIsOpenModal(false)
 }
 const editFaculty = ()=>{
-  if(facultyName!==facData[selectedFac-1].name){
+  if(facultyName.length>3){
+    console.log(facultyName,"vram")
    changeFaculty({
      id:selectedFac,
      name:facultyName
    })
    setIsopenedEdit(false)
+   setError({...error,facultyNameError:false})
+   setFacultyName("");
   } 
+  else {
+    setError({...error,facultyNameError: true});
+  }
 }
 const canselHandler = (str)=>{
   if(facultyName){
@@ -54,10 +82,16 @@ const canselHandler = (str)=>{
   }
   else 
   str === "isopenedEdit"?setIsopenedEdit(false):setIsOpenCreate(false)
+  setError({...error,facultyNameError:false})
 }
+
   return (
     <div>
-      {!isOpenedCreate &&!isopenedEdit &&(<Row>
+      {!isOpenedCreate &&!isopenedEdit &&(
+      <Row>
+        <Modal isOpen = {isOpenModal} deletedData={"Faculty"} onDelete={onDelete} onCansel ={()=>{
+                          setIsOpenModal(false)
+                       }}/>
           <Col >
             <Card>
               <CardHeader>
@@ -79,7 +113,7 @@ const canselHandler = (str)=>{
                   <tbody>
                     {facData&&facData.map(fac=>
                       <tr key= {fac.id}>
-                      <td className="id">{fac.id}</td>
+                      <td className="id">{fac.id.slice(0,3)}</td>
                       <td >{fac.name}</td>
                       <td className= "actions"> 
                        <span className="icons-span"><i className="fa fa-close fa-lg mt-2 red"  onClick={()=>{
@@ -93,61 +127,17 @@ const canselHandler = (str)=>{
                         </td>
                     </tr>
                     )}
-
                   </tbody>
                 </Table>
               </CardBody>
             </Card>
           </Col>
      </Row>)}
-    {isOpenedCreate &&  <Card>
-              <CardHeader>
-                Edit Faculty
-              </CardHeader>
-              <CardBody>
-                <Form action="" method="post">
-                  <FormGroup>
-                  {/* <Label htmlFor="inputIsInvalid">Input is invalid</Label>
-                  <Input type="text" invalid id="inputIsInvalid" />
-                  <FormFeedback>Houston, we have a problem...</FormFeedback> */}
-                    <Label ><strong>Name</strong></Label>
-                    <Input type="text" id="name" valid = {facultyName.length} invalid={facultyName.length==0} name="name" value={facultyName}  onChange={(e)=>{setFacultyName(e.target.value)}} />
-                    <FormFeedback >Non-required</FormFeedback>
-                  </FormGroup>
-                 
-                </Form>
-              </CardBody>
-              <Col col="6"  sm="4" md="2" xl  className="mb-4 mb-xl-2 d-flex justify-content-end pr-4" >
-                <Button  color="success"  className = "mr-2" onClick = {addFaculti}>Save</Button>
-                <Button  color="danger" onClick = {()=>{
-                  canselHandler("isOpenedCreate")
-                }}>Cancel</Button>
-              </Col>
-            </Card>}
-            
-            {isopenedEdit &&  <Card>
-              <CardHeader>
-                Edit Faculty
-              </CardHeader>
-              <CardBody>
-                <Form action="" method="post">
-                  <FormGroup>
-                    <Label ><strong>Name</strong></Label>
-                    <Input type="text" id="name" name="name" value = {facultyName} onChange={(e)=>{setFacultyName(e.target.value)}} /> 
-                  </FormGroup>
-                 
-                </Form>
-              </CardBody>
-              <Col col="6"  sm="4" md="2" xl  className="mb-4 mb-xl-2 d-flex justify-content-end pr-4" >
-                <Button  color="success"  className = "mr-2" onClick = {editFaculty}>Save</Button>
-                <Button  color="danger" onClick = {()=>{
-                  canselHandler("isopenedEdit")
-                }}>Cancel</Button>
-              </Col>
-            </Card>}
+    {isOpenedCreate &&  <Forms data = {{facultyName:facultyName}} error={error} name="Faculty" type = {"Add"} onChange={changeHandler} onSave={addFaculti} onCansel = {canselHandler}/>}        
+    {isopenedEdit && <Forms data = {{facultyName:facultyName}} error={error} name="Faculty" type = {"Edit"} onChange={changeHandler} onSave={editFaculty} onCansel = {canselHandler}/>}
     </div>
   );
-}
+}         
 const mapDispatchToProps = { 
   addFaculty:facultyOperations.addFaculty,
   changeFaculty:facultyOperations.editFaculty,

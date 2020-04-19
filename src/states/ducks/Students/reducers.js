@@ -11,7 +11,7 @@ const initialGroupState =
     email:"karen@gmail.com",
     phone:"05528652",
     faculty:"Geography",
-    group:"1ss"
+    group:"group1"
   },
   {
     id:2,
@@ -20,7 +20,7 @@ const initialGroupState =
     email:"karen@gmail.com",
     phone:"077283222",
     faculty:"History",
-    group:"2cc"
+    group:"group7"
   },
   {
     id:3,
@@ -29,7 +29,7 @@ const initialGroupState =
     email:"Gag@gmail.com",
     phone:"057899652",
     faculty:"Sociology",
-    group:"3bb"
+    group:"group4"
   }
 ]
 

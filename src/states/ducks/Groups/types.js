@@ -1,9 +1,9 @@
-const add = "addGroup";
-const edit = "editGroup";
-const remuve = "remuveGroup"
+// const add = "addGroup";
+// const edit = "editGroup";
+// const remuve = "remuveGroup"
 
-export default {
-    add,
-    edit,
-    remuve
-};
+// export default {
+//     add,
+//     edit,
+//     remuve
+// };

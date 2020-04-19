@@ -6,18 +6,17 @@ const initialGroupState =
 [
   {
     id:1,
-    name:"1ss",
-    faculty:"Geography",
+    name:"11ss",
+    
   },
   {
     id:2,
-    name:"2cc",
-    faculty:"Sociology"
+    name:"22cc",
+  
   },
   {
     id:3,
-    name:"3bb",
-    faculty:"history"
+    name:"33bb",
   }
 ]
 
