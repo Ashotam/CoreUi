@@ -37,9 +37,9 @@ const [error,setError]= useState(
     emailError:false,
     emailErrorText:"Write correct email",
     groupError:false,
-    groupNameErrorText:"Name must choose group",
+    groupNameErrorText:"You must choose group",
     facultyError:false,
-    facultyErrorText:"Name must choose faculty",
+    facultyErrorText:"You ame must choose faculty",
   }
 )
 const [isOpenModal,setIsOpenModal]= useState(false)
@@ -49,7 +49,7 @@ const  validateEmail=(email)=> {
   return re.test(String(email).toLowerCase());
 }
 const validatePhone =(phone)=> {
-  var phoneno = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
+  var phoneno = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{3})$/;
     return phoneno.test(String(phone).toLowerCase());
 }
 const openCreateStudent = ()=>{
@@ -92,7 +92,7 @@ const addHendler = ()=>{
     setIsOpenCreate(false);
     setStudentName("");
     setStudentLastName("");
-    setStudentEmail();
+    setStudentEmail("");
     setStudentPhone("")
     setSelectedGroup("")
     setSelectedFac("")
@@ -154,7 +154,7 @@ const editStudent = ()=>{
     })
     setStudentName("");
     setStudentLastName("");
-    setStudentEmail();
+    setStudentEmail("");
     setStudentPhone("")
     setSelectedGroup("")
     setSelectedFac("")
@@ -164,7 +164,7 @@ const editStudent = ()=>{
 }
 
 const canselHandler = (str)=>{
-  if(studentName){
+  if(studentName||studentLastName||studentEmail||studentPhone||selectedGroup||selectedFac){
     setStudentName("");
     setStudentLastName("");
     setStudentEmail("");
@@ -175,6 +175,10 @@ const canselHandler = (str)=>{
   else 
   str === "isopenedEdit"?setIsopenedEdit(false):setIsOpenCreate(false);
   setError({...error, nameError:false,lastNameError:false,emailError:false,phoneError:false,facultyError:false,groupError:false})
+}
+const selectFaculty= (e)=>{
+  setSelectedFac(e.target.value)
+  setSelectedGroup("")
 }
   return (
     <div>
@@ -255,9 +259,9 @@ const canselHandler = (str)=>{
                     <Label ><strong>Faculty:</strong></Label> 
                     <Col xs="18" md="15">
                       <Input type="select" name="selectFaculty" id="selectFaculty" invalid={selectedFac.length===0 && error.facultyError} onChange = {(e)=>{setSelectedFac(e.target.value)}}>
-                           <option hidden >{}</option>
+                           <option hidden >{selectedFac}</option>
 =                        {facData.map((fac)=>{
-                          return( <option key = {fac.id}value={`${fac.name}`} >{fac.name}</option>)
+                          return( <option key = {fac.id} >{fac.name}</option>)
                         })}
                       </Input>
                       <FormFeedback>{error.facultyErrorText}</FormFeedback> 
@@ -265,9 +269,9 @@ const canselHandler = (str)=>{
                     <Label ><strong>Group:</strong></Label>
                     <Col xs="18" md="15">
                       <Input type="select" name="selectGroup" id="selectGroup" invalid={selectedGroup.length===0 && error.groupError}  onChange = {(e)=>{setSelectedGroup(e.target.value)}}>
-                      <option hidden ></option>
+                      <option hidden >{selectedGroup}</option>
 =                        {groupData&&groupData.map((group)=>{
-                          return( <option key = {group.id}value={`${group.name}`} >{group.name}</option>)
+                          return( <option key = {group.id} >{group.name}</option>)
                         })}
                       </Input>
                       <FormFeedback>{error.groupNameErrorText}</FormFeedback> 
@@ -306,7 +310,7 @@ const canselHandler = (str)=>{
                     <FormFeedback>{error.phoneErrorText }</FormFeedback>
                     <Label ><strong>Faculty:</strong></Label>
                     <Col xs="18" md="15">
-                      <Input type="select" name="selectFaculty" invalid={selectedFac.length===0 && error.facultyError} id="selectFaculty" placeholder={""} onChange = {(e)=>{setSelectedFac(e.target.value)}}>
+                      <Input type="select" name="selectFaculty" invalid={selectedFac.length===0 && error.facultyError} id="selectFaculty" placeholder={""} onChange = {(e)=>{selectFaculty(e)}}>
                              <option hidden >{selectedFac}</option>
 =                        {facData.map((fac)=>{
                           return( <option key = {fac.id}value={`${fac.name}`} >{fac.name}</option>)

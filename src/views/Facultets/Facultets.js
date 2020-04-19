@@ -28,7 +28,8 @@ const addFaculti = ()=>{
    
     let newFac = {
       id:shortId.generate(),
-      name:facultyName
+      name:facultyName,
+      groups:[]
     }
     addFaculty(newFac)
     setIsOpenCreate(false);

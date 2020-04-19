@@ -30,7 +30,7 @@ function Dashboard(props) {
     useEffect(() => {
     
       if(selectedFac.length){
-        const  groupData = facData.find(fac=>fac.name===selectedFac).groups
+        const    groupData = facData.find(fac=>fac.name===selectedFac).groups
          setGroupData(groupData)
       }
       
