@@ -1,22 +1,21 @@
 import types from "./types";
 
-const add = (data ) => ( {
-    type: types.add,
-    data
-} );
+const add = (data) => ({
+  type: types.add,
+  data,
+});
 
-const edit = ( data ) => ( {
-    type: types.edit,
-        data
-    
-} );
-const remuve = ( id ) => ( {
+const edit = (data) => ({
+  type: types.edit,
+  data,
+});
+const remuve = (id) => ({
   type: types.remuve,
-      id
-} );
+  id,
+});
 
 export default {
   add,
   edit,
-  remuve
+  remuve,
 };

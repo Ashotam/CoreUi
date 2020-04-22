@@ -1,35 +1,34 @@
 import types from "./types";
 
-const add = (data ) => ( {
-    type: types.add,
-    data
-} );
+const add = (data) => ({
+  type: types.add,
+  data,
+});
 
-const edit = ( data ) => ( {
-    type: types.edit,
-        data
-    
-} );
-const remuve = ( id ) => ( {
+const edit = (data) => ({
+  type: types.edit,
+  data,
+});
+const remuve = (id) => ({
   type: types.remuve,
-      id
-} );
-const addGroup = (data,facultyName ) => ( {
+  id,
+});
+const addGroup = (data, facultyName) => ({
   type: types.addGroup,
   data,
-  facultyName
-} );
+  facultyName,
+});
 
-const editGroup = ( data,facultyName ) => ( {
+const editGroup = (data, facultyName) => ({
   type: types.editGroup,
-      data,
-      facultyName
-} );
-const remuveGroup = ( facultyName,id,) => ( {
-type: types.remuveGroup,
-    id,
-    facultyName
-} );
+  data,
+  facultyName,
+});
+const remuveGroup = (facultyName, id) => ({
+  type: types.remuveGroup,
+  id,
+  facultyName,
+});
 
 export default {
   add,
@@ -37,5 +36,5 @@ export default {
   remuve,
   addGroup,
   editGroup,
-  remuveGroup
+  remuveGroup,
 };
