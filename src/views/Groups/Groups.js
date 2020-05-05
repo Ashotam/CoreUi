@@ -7,18 +7,13 @@ import {
   Row,
   Table,
   Button,
-  Form,
-  FormGroup,
-  Input,
-  Label,
-  FormFeedback,
 } from "reactstrap";
 import "./Groups.css";
 import { connect } from "react-redux";
 import { facultyOperations } from "../../states/ducks/Faculty";
 import shortId from "shortid";
 
-import Forms from "../Forms/FacultyForm";
+import Forms from "../Forms/GroupForm.js";
 import Modal from "../Modals/Modals";
 function Groups(props) {
   const { facData, addGroup, changeGroup, deletGroup } = props;
@@ -107,8 +102,7 @@ function Groups(props) {
   const canselHandler = (str) => {
     if (groupName) {
       setGroupName("");
-    } else
-      str === "isopenedEdit" ? setIsopenedEdit(false) : setIsOpenCreate(false);
+    } else str === "edit" ? setIsopenedEdit(false) : setIsOpenCreate(false);
     setError({ ...error, facultyError: false, groupNameError: false });
   };
   return (
@@ -182,139 +176,31 @@ function Groups(props) {
         </Row>
       )}
       {isOpenedCreate && (
-        <Card>
-          <CardHeader>Add Group</CardHeader>
-          <CardBody>
-            <Form action="">
-              <FormGroup>
-                <Label>
-                  <strong>Faculty:</strong>
-                </Label>
-                <Col xs="18" md="15">
-                  <Input
-                    type="select"
-                    name="select"
-                    id="select"
-                    invalid={selectedFac.length < 1 && error.facultyError}
-                    placeholder={""}
-                    onChange={(e) => {
-                      setSelectedFac(e.target.value);
-                    }}
-                  >
-                    <option hidden></option>={" "}
-                    {facData.map((fac) => {
-                      return (
-                        <option key={fac.id} value={`${fac.name}`}>
-                          {fac.name}
-                        </option>
-                      );
-                    })}
-                  </Input>
-                </Col>
-                <FormFeedback>{error.facultyErrorText}</FormFeedback>
-                <Label>
-                  <strong>Name:</strong>
-                </Label>
-                <Input
-                  type="text"
-                  name="name"
-                  invalid={groupName.length < 4 && error.groupNameError}
-                  value={groupName}
-                  onChange={(e) => {
-                    setGroupName(e.target.value);
-                  }}
-                />
-                <FormFeedback>{error.groupNameErrorText}</FormFeedback>
-              </FormGroup>
-            </Form>
-          </CardBody>
-          <Col
-            col="6"
-            sm="4"
-            md="2"
-            xl
-            className="mb-4 mb-xl-2 d-flex justify-content-end pr-4"
-          >
-            <Button
-              className="mr-2"
-              color="danger"
-              onClick={() => {
-                canselHandler("isOpenedCreate");
-              }}
-            >
-              Cancel
-            </Button>
-            <Button color="success" onClick={addHendler}>
-              Save
-            </Button>
-          </Col>
-        </Card>
+        <Forms
+          type={"creat"}
+          facData={facData}
+          selectedFac={selectedFac}
+          groupName={groupName}
+          error={error}
+          setSelectedFac={setSelectedFac}
+          setGroupName={setGroupName}
+          canselHandler={canselHandler}
+          addHendler={addHendler}
+        />
       )}
-      {/* {isOpenedCreate &&  <Forms data = {{facultyName:facultyName}} error={error} name="Group" type = {"Add"} onChange={setFacultyName} onSave={addFaculti} onCansel = {canselHandler}/>}  */}
+
       {isopenedEdit && (
-        <Card>
-          <CardHeader>Edit Group</CardHeader>
-          <CardBody>
-            <Form action="">
-              <FormGroup>
-                <Label>
-                  <strong>Name:</strong>
-                </Label>
-                <Col xs="18" md="15">
-                  <Input
-                    type="select"
-                    name="select"
-                    id="select"
-                    placeholder={""}
-                    invalid={!selectedFac && error.facultyError}
-                    onChange={(e) => {
-                      setSelectedFac(e.target.value);
-                    }}
-                  >
-                    <option> {selectedFac}</option>=
-                  </Input>
-                  <FormFeedback>{error.facultyErrorText}</FormFeedback>
-                </Col>
-              </FormGroup>
-              <FormGroup>
-                <Label>
-                  <strong>Name</strong>
-                </Label>
-                <Input
-                  type="text"
-                  id="name"
-                  name="name"
-                  invalid={groupName.length < 3 && error.groupNameError}
-                  value={groupName}
-                  onChange={(e) => {
-                    setGroupName(e.target.value);
-                  }}
-                />
-                <FormFeedback>{error.groupNameErrorText}</FormFeedback>
-              </FormGroup>
-            </Form>
-          </CardBody>
-          <Col
-            col="6"
-            sm="4"
-            md="2"
-            xl
-            className="mb-4 mb-xl-2 d-flex justify-content-end pr-4"
-          >
-            <Button
-              color="danger"
-              className="mr-2"
-              onClick={() => {
-                canselHandler("isopenedEdit");
-              }}
-            >
-              Cancel
-            </Button>
-            <Button color="success" onClick={editGroup}>
-              Save
-            </Button>
-          </Col>
-        </Card>
+        <Forms
+          type={"edit"}
+          facData={facData}
+          selectedFac={selectedFac}
+          groupName={groupName}
+          error={error}
+          setSelectedFac={setSelectedFac}
+          setGroupName={setGroupName}
+          canselHandler={canselHandler}
+          addHendler={editGroup}
+        />
       )}
     </div>
   );

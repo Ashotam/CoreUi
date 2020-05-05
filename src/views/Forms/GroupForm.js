@@ -13,52 +13,77 @@ import {
 } from "reactstrap";
 
 function Forms(props) {
-  const { data, error, name, type, onChange, onSave, onCansel } = props;
+  const {
+    type,
+    facData,
+    selectedFac,
+    groupName,
+    error,
+    setSelectedFac,
+    setGroupName,
+    canselHandler,
+    addHendler,
+  } = props;
   return (
     <div>
       <Card>
-        <CardHeader>{`${type} ${name}`}</CardHeader>
+        <CardHeader>Add Group</CardHeader>
         <CardBody>
-          <Form action="" method="post">
+          <Form action="">
             <FormGroup>
               <Label>
                 <strong>Faculty:</strong>
               </Label>
-              <Col xs="18" md="15">
-                <Input
-                  type="select"
-                  name="select"
-                  id="select"
-                  invalid={selectedFac.length < 1 && error.facultyError}
-                  placeholder={""}
-                  onChange={(e) => {
-                    setSelectedFac(e.target.value);
-                  }}
-                >
-                  <option hidden></option>={" "}
-                  {facData.map((fac) => {
-                    return (
-                      <option key={fac.id} value={`${fac.name}`}>
-                        {fac.name}
-                      </option>
-                    );
-                  })}
-                </Input>
-              </Col>
+              {type === "creat" ? (
+                <Col xs="18" md="15">
+                  <Input
+                    type="select"
+                    name="select"
+                    id="select"
+                    invalid={selectedFac.length < 1 && error.facultyError}
+                    placeholder={""}
+                    onChange={(e) => {
+                      setSelectedFac(e.target.value);
+                    }}
+                  >
+                    <option hidden></option>={" "}
+                    {facData.map((fac) => {
+                      return (
+                        <option key={fac.id} value={`${fac.name}`}>
+                          {fac.name}
+                        </option>
+                      );
+                    })}
+                  </Input>
+                </Col>
+              ) : (
+                <Col xs="18" md="15">
+                  <Input
+                    type="select"
+                    name="select"
+                    id="select"
+                    invalid={selectedFac.length < 1 && error.facultyError}
+                    placeholder={""}
+                  >
+                    <option hidden>{selectedFac}</option>= })}
+                  </Input>
+                </Col>
+              )}
+
+              <FormFeedback>{error.facultyErrorText}</FormFeedback>
               <Label>
-                <strong>Name</strong>
+                <strong>Name:</strong>
               </Label>
               <Input
                 type="text"
-                id="name"
-                invalid={data.facultyName.length < 4 && error.facultyNameError}
                 name="name"
-                value={data.facultyName}
+                invalid={groupName.length < 4 && error.groupNameError}
+                value={groupName}
                 onChange={(e) => {
-                  onChange(e.target.value);
+                  setGroupName(e.target.value);
                 }}
               />
-              <FormFeedback>{error.facultyNameErrorText}</FormFeedback>
+              <FormFeedback>{error.groupNameErrorText}</FormFeedback>
             </FormGroup>
           </Form>
         </CardBody>
@@ -70,17 +95,15 @@ function Forms(props) {
           className="mb-4 mb-xl-2 d-flex justify-content-end pr-4"
         >
           <Button
-            color="danger"
             className="mr-2"
+            color="danger"
             onClick={() => {
-              type === "Add"
-                ? onCansel("isOpenedCreate")
-                : onCansel("isopenedEdit");
+              canselHandler(type);
             }}
           >
             Cancel
           </Button>
-          <Button color="success" onClick={onSave}>
+          <Button color="success" onClick={addHendler}>
             Save
           </Button>
         </Col>
