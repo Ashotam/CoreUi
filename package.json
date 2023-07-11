@@ -45,7 +45,7 @@
     "typesafe-actions": "^5.1.0"
   },
   "devDependencies": {
-    "react-scripts": "^3.0.1"
+    "react-scripts": "^5.0.1"
   },
   "scripts": {
     "start": "react-scripts start",
